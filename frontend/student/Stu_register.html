@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f5f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .form-container {
+        background: white;
+        padding: 30px;
+        width: 360px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    label {
+        font-weight: bold;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 6px;
+        color: #444;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    input:focus, select:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 5px rgba(74,144,226,0.4);
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #4a90e2;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    button:hover {
+        background: #357ac9;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Student Registration</h2>
+
+    <form>
+
+        <label>Full Name</label>
+        <input id="name" type="text" placeholder="Enter full name" required>
+
+        <label>Enrollment Number</label>
+        <input id="enroll" type="text" placeholder="Enter enrollment no." required>
+
+        <label>Course</label>
+        <select id="course" required>
+            <option value="" disabled selected>Select course</option>
+            <option>B.Tech</option>
+            <option>Diploma</option>
+            <option>Pharmacy</option>
+        </select>
+
+        <label>Department</label>
+        <select id="department" required>
+            <option value="" disabled selected>Select department</option>
+            <option>Computer Science</option>
+            <option>Information Technology</option>
+            <option>Electronics</option>
+            <option>Civil</option>
+            <option>Mechanical</option>
+            <option>Electrical</option>
+            <option>Pharmacy</option>
+        </select>
+
+        <label>Email ID</label>
+        <input id="email" type="email" placeholder="Enter email" required>
+
+        <label>Set Password</label>
+        <input id="password" type="password" placeholder="Create password" required>
+
+        <button type="button" onclick="register()">Register</button>
+
+    </form>
+</div>
+
+</body>
+
+<script>
+ 
+    async function register(){
+        const inputname = document.getElementById("name");
+        const inputenroll = document.getElementById("enroll");
+        const inputcourse = document.getElementById("course");
+        const inputdepartment = document.getElementById("department");
+        const inputemail = document.getElementById("email");
+        const inputpassword = document.getElementById("password");
+
+        const name = inputname.value;
+        const enroll = inputenroll.value;
+        const course = inputcourse.value;
+        const department = inputdepartment.value;
+        const email = inputemail.value;
+        const password = inputpassword.value;
+
+
+       const baseURL = "http://localhost:5500/api/account";
+       const newStudent = {name,enroll,course,department,email,password};
+
+
+       try{
+              const response = await fetch(baseURL, {
+            method: "POST",
+            headers : { "Content-Type": "application/json" },
+            body : JSON.stringify(newStudent)
+        });
+
+         if(response.ok){
+            alert("Data Saved");
+            console.log("Data saved");
+
+            inputname.value = "";
+            inputenroll.value = "";
+            inputcourse.value = "";
+            inputdepartment.value = "";
+            inputemail.value = "";
+            inputpassword.value = "";
+            window.location.href = "login_stu.html";
+         }
+         else if(response.status == 400){
+           alert("👥 BHOSDIKE Enroll_no alrady exists! 👥");
+         }
+         else{
+            alert("API ERROR");
+             console.log("API ERROR");
+         }
+       }
+       catch(error){
+         console.log("Network ERROR");
+       }
+    } 
+
+</script>
+
+</html>

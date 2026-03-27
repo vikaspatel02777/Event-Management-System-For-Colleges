@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f5f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .form-container {
+        background: white;
+        padding: 30px;
+        width: 360px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    label {
+        font-weight: bold;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 6px;
+        color: #444;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    input:focus, select:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 5px rgba(74,144,226,0.4);
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #4a90e2;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.25s;
+    }
+
+    button:hover {
+        background: #357ac9;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Organizer Registration</h2>
+
+    <form>
+
+        <label>Full Name</label>
+        <input id="name" type="text" placeholder="Enter full name" required>
+
+        <label>Org_ID Number</label>
+        <input id="org_id" type="text" placeholder="Enter Org_ID no." required>
+
+        <label>Role</label>
+        <select id="role" required>
+            <option value="" disabled selected>Select course</option>
+            <option>Coordinator</option>
+            <option>Manager</option>
+            <option>Event Lead</option>
+        </select>
+
+        <label>Department / Club Name</label>
+        <select id="department" required>
+            <option value="" disabled selected>Select department</option>
+            <option>Cultural</option>
+            <option>Sports</option>
+            <option>Tech</option>
+            <option>Club</option>
+            <option>NCC</option>
+            <option>NSS</option> 
+        </select>
+
+        <label>Email ID</label>
+        <input id="email" type="email" placeholder="Enter email" required>
+
+         <label>Contact</label>
+        <input id="phone" type="number" placeholder="Contact No." minlength="10" maxlength="10" required>
+
+        <label>Set Password</label>
+        <input id="password" type="password" placeholder="Create password" required>
+
+        <button type="button" onclick="register()">Register</button>
+
+    </form>
+</div>
+
+</body>
+
+<script>
+ 
+    async function register(){
+        const inputname = document.getElementById("name");
+        const inputorg_id = document.getElementById("org_id");
+        const inputrole = document.getElementById("role");
+        const inputdepartment = document.getElementById("department");
+        const inputemail = document.getElementById("email");
+        const inputphone = document.getElementById("phone");
+        const inputpassword = document.getElementById("password");
+
+        const name = inputname.value;
+        const org_id = inputorg_id.value;
+        const role = inputrole.value;
+        const department = inputdepartment.value;
+        const email = inputemail.value;
+        const phone = inputphone.value;
+        const password = inputpassword.value;
+
+   
+       const baseURL = "http://localhost:5500/api/orgaccount";
+       const newOrganizer = {name,org_id,role,department,phone,email,password};
+
+       try{
+            const response = await fetch(baseURL, {
+            method: "POST",
+            headers : { "Content-Type": "application/json" },
+            body : JSON.stringify(newOrganizer)
+        });
+
+         if(response.ok){
+            alert("Data Saved");
+            console.log("Data saved");
+ 
+           inputname.value = "";
+           inputorg_id.value = "";
+           inputrole.value = "";
+           inputdepartment.value = "";
+           inputemail.value = "";
+           inputphone.value = "";
+           inputpassword.value = ""; 
+           window.location.href = "login_org.html";
+         }
+         else if(response.status == 400){
+           alert("👥 BHOSDIKE Enroll_no alrady exists! 👥");
+         }
+         else{
+             alert("API ERROR");
+             console.log("API ERROR");
+         }
+       }
+       catch(error){
+         console.log("Network ERROR");
+       }
+    } 
+
+</script>
+
+</html>

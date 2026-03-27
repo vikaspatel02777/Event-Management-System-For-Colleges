@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #1a252f;
+            --accent-color: #e67e22;
+            --bg-color: #f4f7fb;
+            --text-color: #2c3e50;
+            --sidebar-width: 260px;
+            --navbar-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 1200; /* Higher than sidebar (1001) */
+        }
+        
+        /* CSS fallback for hamburger if font-awesome fails */
+        .menu-toggle::before {
+            content: '\f0c9'; /* Default FA hamburger */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+        }
+        
+        /* If FA fails, this will show a simple burger */
+        .no-fa-icon::before {
+            content: "☰";
+            font-family: Arial, sans-serif !important;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: #f1f2f6;
+            padding: 5px 15px;
+            border-radius: 25px;
+        }
+
+        .search-container input {
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 8px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            background: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #d35400;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-icon {
+            font-size: 28px;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .profile-icon:hover {
+            color: var(--accent-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -260px; /* Fallback for older browsers */
+            left: calc(-1 * var(--sidebar-width));
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--primary-color);
+            color: #fff;
+            transition: 0.3s ease-in-out;
+            padding: 20px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            left: 0 !important;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            text-decoration: none;
+            color: #b0c4de;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--accent-color);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            background: #c0392b;
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #e74c3c;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: var(--navbar-height);
+            padding: 30px;
+            transition: 0.3s;
+        }
+
+        .upcoming-events {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .upcoming-events h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f1f2f6;
+        }
+
+        tr.highlight {
+            background-color: #d4edda !important;
+            transition: 0.5s;
+        }
+
+        .desc-btn, .book-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .desc-btn {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .desc-btn:hover {
+            background: #2980b9;
+        }
+
+        .book-btn {
+            background: #2ecc71;
+            color: #fff;
+        }
+
+        .book-btn:hover {
+            background: #27ae60;
+        }
+
+        /* Overlays Area */
+        .tooltip-box {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+        }
+
+        .tooltip-content {
+            width: 90%;
+            max-width: 500px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .tooltip-close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: #e74c3c;
+        }
+
+        /* Overlay fix for sidebar */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        .overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <i id="hamburger" class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
+            <h2 id="wel">Dashboard</h2>
+        </div>
+        <div class="nav-right">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="event-search" placeholder="Search event by name...">
+                <button class="search-btn" onclick="searchEvent()">Search</button>
+            </div>
+            <i class="fas fa-user-circle profile-icon" onclick="showProfile()"></i>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div style="text-align: right; padding: 15px;">
+            <i class="fas fa-arrow-left" style="cursor: pointer; font-size: 20px; color: var(--accent-color);" onclick="toggleSidebar()"></i>
+        </div>
+        <h2>Student Hub</h2>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active" onclick="handleMenuClick('upcoming', this)"><i class="fas fa-calendar-alt"></i> Upcoming Events</a></li>
+            <li><a href="#" onclick="handleMenuClick('pending', this)"><i class="fas fa-clock"></i> Pending Events</a></li>
+            <li><a href="#" onclick="handleMenuClick('register', this)"><i class="fas fa-file-invoice"></i> Your Register</a></li>
+        </ul>
+        <a href="#" class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </aside>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="upcoming-events">
+            <h2 id="table-title">Upcoming Events</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Availability</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="event-body">
+                    <!-- DYNAMIC CONTENT -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Tooltip / Popup Box -->
+    <div id="desc-tooltip" class="tooltip-box">
+        <div class="tooltip-content">
+            <span class="tooltip-close" onclick="closeTooltip()">✕</span>
+            <h3 id="hed">Information</h3>
+            <hr style="margin: 15px 0;">
+            <div id="tooltip-text"></div>
+        </div>
+    </div>
+
+    <script>
+        const userData = JSON.parse(localStorage.getItem("userdata")) || {};
+        document.getElementById("wel").innerText = "Hi, " + (userData.name || "Student");
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("overlay");
+            
+            if (sidebar.classList.contains("active")) {
+                sidebar.classList.remove("active");
+                overlay.classList.remove("active");
+            } else {
+                sidebar.classList.add("active");
+                overlay.classList.add("active");
+            }
+        }
+
+        function handleMenuClick(type, element) {
+            // Update active link
+            document.querySelectorAll(".sidebar-menu a").forEach(a => a.classList.remove("active"));
+            element.classList.add("active");
+            toggleSidebar();
+
+            if (type === 'upcoming') loadEvents();
+            else if (type === 'pending') showPendingEvents();
+            else if (type === 'register') showRegisterData();
+        }
+
+        async function loadEvents() {
+            const tbody = document.getElementById("event-body");
+            const urls = [
+                "http://localhost:5500/api/event",
+                "http://localhost:5500/api/culturel_event",
+                "http://localhost:5500/api/fun_event",
+                "http://localhost:5500/api/tech_event",
+                "http://localhost:5500/api/seminar_event",
+                "http://localhost:5500/api/sport_event"
+            ];
+
+            try {
+                const allResponses = await Promise.all(urls.map(url => fetch(url)));
+                const allData = await Promise.all(allResponses.map(res => res.json()));
+                const events = allData.flat();
+
+                tbody.innerHTML = "";
+                document.getElementById("table-title").innerText = "Upcoming Events";
+
+                events.forEach(e => {
+                    if (e.status === "active") {
+                        const row = `
+                            <tr>
+                                <td>${e.event_name || e.name}</td>
+                                <td>${e.event_date || e.date}</td>
+                                <td>${e.event_time || e.time}</td>
+                                <td>${e.event_location || e.location}</td>
+                                <td>${e.event_seats || e.seats}</td>
+                                <td><button class="desc-btn" onclick="showDescription('${e.event_discription || e.decs}')">Description</button></td>
+                                <td>🟢 Active</td>
+                                <td>
+                                    <button class="book-btn" onclick="saveEvent(
+                                        '${e.event_name || e.name}', 
+                                        '${e.event_date || e.date}',
+                                        '${e.event_time || e.time}', 
+                                        '${e.event_location || e.location}'
+                                        )">Book Now</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    }
+                });
+            } catch (error) {
+                console.error("Error loading events:", error);
+            }
+        }
+
+        async function showPendingEvents() {
+            const tbody = document.getElementById("event-body");
+            const urls = [
+                "http://localhost:5500/api/event",
+                "http://localhost:5500/api/culturel_event",
+                "http://localhost:5500/api/fun_event",
+                "http://localhost:5500/api/tech_event",
+                "http://localhost:5500/api/seminar_event",
+                "http://localhost:5500/api/sport_event"
+            ];
+
+            try {
+                const allResponses = await Promise.all(urls.map(url => fetch(url)));
+                const allData = await Promise.all(allResponses.map(res => res.json()));
+                const events = allData.flat();
+                const pendingEvents = events.filter(e => e.status === "pending");
+
+                tbody.innerHTML = "";
+                document.getElementById("table-title").innerText = "Pending Events";
+
+                if (pendingEvents.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='8' style='text-align:center; padding:20px;'>No pending events found.</td></tr>";
+                    return;
+                }
+
+                pendingEvents.forEach(e => {
+                    const row = `
+                        <tr>
+                            <td>${e.event_name || e.name}</td>
+                            <td>${e.event_date || e.date}</td>
+                            <td>${e.event_time || e.time}</td>
+                            <td>${e.event_location || e.location}</td>
+                            <td>${e.event_seats || e.seats}</td>
+                            <td><button class="desc-btn" onclick="showDescription('${e.event_discription || e.decs}')">Description</button></td>
+                            <td>⏳ Pending</td>
+                            <td>
+                                <button class="book-btn" disabled style="background-color: #ccc; cursor: not-allowed;">Awaiting Approval</button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Error loading pending events:", error);
+            }
+        }
+
+        async function showRegisterData() {
+            const tbody = document.getElementById("event-body");
+            try {
+                const res = await fetch(`http://localhost:5500/api/event_register?enroll=${userData.enroll}`);
+                const regData = await res.json();
+                
+                tbody.innerHTML = "";
+                document.getElementById("table-title").innerText = "Your Registrations";
+
+                if (regData.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='8' style='text-align:center; padding:20px;'>No registrations found.</td></tr>";
+                    return;
+                }
+
+                regData.forEach((e, index) => {
+                    const row = `
+                        <tr>
+                            <td>${e.event_name}</td>
+                            <td>${e.event_date || 'N/A'}</td>
+                            <td>${e.event_time}</td>
+                            <td>${e.event_location}</td>
+                            <td>-</td>
+                            <td><button class="desc-btn" onclick="showDescription('${e.message || 'No additional message'}')">View Msg</button></td>
+                            <td>✅ Registered</td>
+                            <td>
+                                <button class="book-btn" style="background: #3498db;" onclick="showTooltip('You are successfully registered for <b>${e.event_name}</b> at <b>${e.event_location}</b>. <br><br><b>Your Message:</b> ${e.message || 'N/A'}', 'Registration Details')">Details</button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Error loading registration data:", error);
+                alert("Failed to load registrations");
+            }
+        }
+
+        function showDescription(text) {
+            showTooltip(text, "Event Description");
+        }
+
+        function showProfile() {
+            const html = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="fas fa-user-circle" style="font-size: 60px; color: var(--primary-color);"></i>
+                </div>
+                <p><b>Name:</b> ${userData.name}</p>
+                <p><b>Enrollment:</b> ${userData.enroll}</p>
+                <p><b>Email:</b> ${userData.email}</p>
+            `;
+            showTooltip(html, "My Profile");
+        }
+
+        function showTooltip(html, title = "Information") {
+            document.getElementById("tooltip-text").innerHTML = html;
+            document.getElementById("hed").innerText = title;
+            document.getElementById("desc-tooltip").style.display = "block";
+        }
+
+        function closeTooltip() {
+            document.getElementById("desc-tooltip").style.display = "none";
+        }
+
+        function saveEvent(name, date, time, location) {
+            localStorage.setItem("selectedEvent", JSON.stringify({
+                event_name: name,
+                event_date: date,
+                event_time: time,
+                event_location: location
+            }));
+            window.location.href = 'event_ragis_stu.html';
+        }
+
+        function searchEvent() {
+            const query = document.getElementById("event-search").value.toLowerCase();
+            const rows = document.querySelectorAll("#event-body tr");
+            let found = false;
+
+            rows.forEach(row => {
+                const name = row.cells[0].innerText.toLowerCase();
+                if (query !== "" && name.includes(query)) {
+                    row.classList.add("highlight");
+                    if(!found) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    found = true;
+                } else {
+                    row.classList.remove("highlight");
+                }
+            });
+
+            if (!found && query !== "") {
+                alert("Event not found!");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("userdata");
+            window.location.href = "../index.html";
+        }
+
+        // Initial load
+        loadEvents();
+
+        // Check if Font Awesome loaded
+        setTimeout(() => {
+            const icon = document.getElementById('hamburger');
+            if (icon && window.getComputedStyle(icon, ':before').content === 'none' || window.getComputedStyle(icon, ':before').content === '""') {
+                icon.classList.add('no-fa-icon');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

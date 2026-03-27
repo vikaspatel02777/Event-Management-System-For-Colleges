@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; min-height: 100vh; background-color: #f0f2f5; }
+        
+        .sidebar { width: 260px; background-color: #1a252f; color: #fff; display: flex; flex-direction: column; padding: 20px; position: fixed; height: 100%; }
+        .sidebar h2 { text-align: center; margin-bottom: 40px; font-weight: 600; letter-spacing: 1px; }
+        .menu { list-style: none; }
+        .menu li { margin-bottom: 15px; }
+        .menu a { text-decoration: none; color: #b0c4de; font-size: 16px; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.3s; }
+        .menu a:hover, .menu a.active { background-color: #e67e22; color: #fff; transform: translateX(5px); }
+        .logout { margin-top: auto; }
+        .logout a { background-color: #c0392b; color: white; text-align: center; }
+
+        .main-content { margin-left: 260px; flex: 1; padding: 30px; }
+        .header { margin-bottom: 30px; }
+        .header h1 { color: #2c3e50; font-size: 28px; }
+
+        .event-section { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid #e67e22; }
+        .event-section h2 { color: #2c3e50; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #2c3e50; font-weight: 600; }
+        tr:hover { background-color: #f9f9f9; }
+        .no-reg { color: #7f8c8d; font-style: italic; padding: 10px 0; }
+        
+        .loader { text-align: center; padding: 50px; font-size: 18px; color: #3498db; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>AdminPanel</h2>
+        <ul class="menu">
+            <li><a href="adm_dashboard.html">Dashboard</a></li>
+            <li><a href="manage_events.html">Manage Events</a></li>
+            <li><a href="student_list.html" class="active">Student List</a></li>
+            <li><a href="#">Requests</a></li>
+            <li><a href="#">Announcements</a></li>
+            <li class="logout"><a href="login_adm.html">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Student Registration List</h1>
+            <p>Grouped by Active Events</p>
+        </div>
+
+        <div id="list-container">
+            <div class="loader">Loading student data...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadStudentList() {
+            const container = document.getElementById("list-container");
+            const eventUrls = [
+                "http://localhost:5500/api/event",
+                "http://localhost:5500/api/culturel_event",
+                "http://localhost:5500/api/fun_event",
+                "http://localhost:5500/api/tech_event",
+                "http://localhost:5500/api/seminar_event",
+                "http://localhost:5500/api/sport_event"
+            ];
+            const regUrl = "http://localhost:5500/api/event_register";
+
+            try {
+                // Fetch All Events
+                const eventResponses = await Promise.all(eventUrls.map(url => fetch(url)));
+                const eventData = await Promise.all(eventResponses.map(res => res.json()));
+                const activeEvents = eventData.flat().filter(e => (e.event_status || e.status) === "active");
+
+                // Fetch All Registrations
+                const regResponse = await fetch(regUrl);
+                const allRegistrations = await regResponse.json();
+
+                container.innerHTML = "";
+
+                if (activeEvents.length === 0) {
+                    container.innerHTML = "<p>No active events found.</p>";
+                    return;
+                }
+
+                activeEvents.forEach(event => {
+                    const event_name = event.event_name || event.name;
+                    const registrations = allRegistrations.filter(r => r.event_name === event_name);
+
+                    const section = document.createElement("div");
+                    section.className = "event-section";
+                    
+                    let tableHtml = `<h2>${event_name}</h2>`;
+                    
+                    if (registrations.length > 0) {
+                        tableHtml += `
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Enrollment</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${registrations.map(r => `
+                                        <tr>
+                                            <td>${r.name}</td>
+                                            <td>${r.enroll}</td>
+                                            <td>${r.email}</td>
+                                            <td>${r.phone}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        tableHtml += `<p class="no-reg">0 registrations found for this event.</p>`;
+                    }
+
+                    section.innerHTML = tableHtml;
+                    container.appendChild(section);
+                });
+
+            } catch (err) {
+                console.error("Error loading list:", err);
+                container.innerHTML = "<p style='color:red;'>Failed to load student list. Please try again later.</p>";
+            }
+        }
+
+        loadStudentList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: #1a252f;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin-bottom: 15px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #b0c4de;
+            font-size: 16px;
+            display: block;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .menu a:hover, .menu a.active {
+            background-color: #e67e22;
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .logout {
+            margin-top: auto;
+        }
+
+        .logout a {
+            background-color: #c0392b;
+            color: white;
+            text-align: center;
+        }
+
+        .logout a:hover {
+            background-color: #e74c3c;
+            transform: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card:nth-child(1) { border-color: #3498db; }
+        .card:nth-child(2) { border-color: #e67e22; }
+        .card:nth-child(3) { border-color: #2ecc71; }
+        .card:nth-child(4) { border-color: #9b59b6; }
+
+        .card h3 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .card p {
+            color: #7f8c8d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Table */
+        .table-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-section h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f1f2f6;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .action-btn:hover {
+            background-color: #2980b9;
+        }
+
+     
+/* Background blur overlay */
+.tooltip-box {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(2px);
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;   /* सबसे ऊपर दिखेगा */
+}
+
+/* Popup box */
+.tooltip-content {
+    width: 90%;
+    max-width: 450px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    font-family: Consolas, monospace;
+
+    /* Center popup */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    /* Scroll enable when content is long */
+    max-height: 80vh;  
+    overflow-y: auto;
+}
+
+/* Close button */
+.tooltip-close {
+    float: right;
+    cursor: pointer;
+    font-size: 22px;
+    color: #ff0000;
+    font-weight: bold;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>AdminPanel</h2>
+        <ul class="menu">
+            <li><a href="adm_dashboard.html">Dashboard</a></li>
+            <li><a href="manage_events.html" class="active">Manage Events</a></li>
+            <li><a href="student_list.html">Student List</a></li>
+            <li><a href="#">Requests</a></li>
+            <li><a href="#">Announcements</a></li>
+            <li class="logout"><a href="login_adm.html">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Welcome Admin</h1>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="cards">
+            <div class="card">
+                <h3 id="no_event">0</h3>
+                <p>Total Events</p>
+            </div>
+            <div class="card">
+                <h3 id="pending_count">0</h3>
+                <p>Pending Requests</p>
+            </div>
+            <div class="card">
+                <h3>3,500</h3>
+                <p>Total Students</p>
+            </div>
+            <div class="card">
+                <h3>45</h3>
+                <p>Volunteers</p>
+            </div>
+        </div>
+
+        
+    <!-- Tooltip Box -->
+<div id="desc-tooltip" class="tooltip-box">
+    <div class="tooltip-content">
+        <span class="tooltip-close" onclick="closeTooltip()">✕</span>
+        <h3 id="hed">Description</h3>
+        <p id="tooltip-text"></p>
+    </div>
+</div>
+
+  
+        <textarea id="desc-tooltip" class="tooltip-box" rows="4" required>Correction box:</textarea>
+
+        <!-- Recent Event Registrations Table -->
+        <div class="table-section">
+            <h2>ALL Events </h2>
+            <table>
+                <thead>
+                    <tr>
+                          <th>Event Name</th>   
+                          <th>Date</th>          
+                          <th>Time</th>
+                          <th>Location</th>
+                          <th>Availability</th>
+                          <th>Discription</th>
+                          <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                      <tbody id="event-body"></tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+<!-- Correction Box -->
+<div id="correction-tooltip" class="tooltip-box" style="display:none;">
+    <div class="tooltip-content">
+        <span class="tooltip-close" onclick="closeCorrectionTooltip()">✕</span>
+        <h3>Correction</h3>
+        <textarea id="correction-text" rows="4" style="width:100%;"></textarea>
+        <button id="final-submit-btn" onclick="submitCorrection()">Submit</button>
+    </div>
+</div>
+
+
+</body>
+
+<script>
+
+async function loadEvents() {
+    const tbody = document.getElementById("event-body");
+    const urls = [
+    "http://localhost:5500/api/event",
+    "http://localhost:5500/api/culturel_event",
+    "http://localhost:5500/api/fun_event",
+    "http://localhost:5500/api/tech_event",
+    "http://localhost:5500/api/seminar_event",
+    "http://localhost:5500/api/sport_event"
+
+];
+
+const allResponses = await Promise.all(urls.map(url => fetch(url)));
+const allData = await Promise.all(allResponses.map(res => res.json()));
+const events = allData.flat(); // sab data ko ek array me combine
+
+//count of events
+let a = 0;
+let pending = 0;
+   events.forEach(event => { 
+       a += 1;
+       if ((event.event_status || event.status) === "pending") {
+           pending += 1;
+       }
+   });
+   document.getElementById("no_event").innerText = a;
+   document.getElementById("pending_count").innerText = pending;
+
+    tbody.innerHTML = "";
+
+    events.forEach(e => {    
+
+          /* <tr> ye yaha har baar ek nai row creat karne ke liye hai */
+        const row = 
+           ` <tr>                       
+             <td>${e.event_name || e.name}</td>
+             <td>${e.event_date || e.date}</td>
+             <td>${e.event_time || e.time}</td>
+             <td>${e.event_location || e.location}</td>
+             <td>${e.event_seats || e.seats}</td>
+             <td> <button class="desc-btn" data-text="${e.event_discription || e.desc}">
+                     Description </button></td>
+              <td>       
+<label>Status:</label>
+<select id="statusDropdown"  onchange="storeValue(this, '${e._id}','${e.db_type}')">
+   <option value="active" ${(e.event_status||e.status) === "active" ? "selected" : ""}>🟢Active</option>
+     <option value="pending" ${(e.event_status||e.status)=== "pending" ? "selected" : ""}>🟡Pending</option>
+     <option id="correction" value="correction" ${(e.event_status||e.status) === "correction" ? "selected" : ""}>🔵Correction</option>
+     <option value="reject" ${(e.event_status||e.status) === "reject" ? "selected" : ""}>🔴Reject</option>
+   
+</select>
+
+<p class="result"></p>
+</td>
+
+            </tr> `;
+        tbody.innerHTML += row;
+
+    });
+}
+
+loadEvents();
+
+function showTooltip(text) {
+    
+    document.getElementById("tooltip-text").innerText = text;
+    document.getElementById("desc-tooltip").style.display = "block";
+}
+function closeTooltip() {
+    document.getElementById("desc-tooltip").style.display = "none";
+}
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("desc-btn")) {
+        const text = e.target.getAttribute("data-text");
+        showTooltip(text);
+    }
+});
+
+
+//status
+async function storeValue(selectTag, eventID , db_type) {
+  const value = selectTag.value;
+  let api = "";
+
+  // detect which API to update
+  if (db_type === "culturel") api = "culturel_event";
+  else if (db_type === "fun") api = "fun_event";
+  else if (db_type === "event") api = "event";
+  else if (db_type === "tech") api = "tech_event";
+  else if (db_type === "seminar") api = "seminar_event";
+  else if (db_type === "sport") api = "sport_event";
+
+  if (value === "correction") {
+      // Store info for submission
+      window.tempCorrection = { id: eventID, api: api };
+      showCorrectionTooltip();
+      return;
+  }
+
+
+  try {
+    const res = await fetch(`http://localhost:5500/api/${api}/${eventID}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: value })
+    });
+
+    const data = await res.json();
+    console.log("Updated:", data);
+
+  } catch (err) {
+    console.log("Update error:", err);
+  }
+}
+
+
+//corretion 
+// Show correction box
+function showCorrectionTooltip() {
+    document.getElementById("correction-tooltip").style.display = "block";
+}
+// Close correction box
+function closeCorrectionTooltip() {
+    document.getElementById("correction-tooltip").style.display = "none";
+}
+// Optional: handle submit
+// Optional: handle submit
+async function submitCorrection() {
+    const { id, api } = window.tempCorrection;
+    const text = document.getElementById("correction-text").value;
+    
+    if (!text) {
+        alert("Please enter a correction message.");
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:5500/api/${api}/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "correction", correction_msg: text })
+        });
+
+        if (res.ok) {
+            alert("Correction Sent Successfully!");
+            closeCorrectionTooltip();
+            loadEvents(); // Refresh table
+        } else {
+            alert("Failed to send correction.");
+        }
+    } catch (err) {
+        console.error("Submit error:", err);
+    }
+}
+// Detect dropdown change
+document.addEventListener("change", function(e) {
+    if (e.target && e.target.id === "statusDropdown") {
+        if (e.target.value === "correction") {
+            showCorrectionTooltip();
+        }
+    }
+});
+
+
+</script>
+</html>

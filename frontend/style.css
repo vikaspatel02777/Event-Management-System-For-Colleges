@@ -1,0 +1,79 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url("../imgs/back.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* optional - scroll par bhi fixed rahe */
+  
+  text-align: center;
+  margin: 0;
+  padding: 40px 0;
+}
+
+
+h1 {
+  margin-top: 150px;
+  color: #222;
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+/* container */
+#full {
+ 
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+/* card style */
+.login-card {
+  position: relative;
+  width: 260px;
+  background: #1e1f23;
+  color: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(20, 20, 20, 0.25);
+  text-align: left;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+/* angled shine like your screenshot */
+.login-card::after {
+  position: absolute;
+  top: -10%;
+  right: -18%;
+  width: 60%;
+  height: 130%;
+  background: rgba(255,255,255,0.04);
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+
+.login-card::before {
+
+  position: absolute;
+  width: 25%;
+  height: 100%;
+  background: rgba(0,0,0,0.20);
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+
+/* heading */
+.login-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+
+/* hover effect */
+.login-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+}

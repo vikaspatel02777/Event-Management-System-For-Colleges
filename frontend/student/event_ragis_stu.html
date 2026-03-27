@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Event Registration</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .form-box {
+            width: 90%;
+            max-width: 500px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4a67ff;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #354edf;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="form-box">
+        <h2>Student Event Registration</h2>
+
+        <form>
+            <label>Student Name</label>
+            <input id="name" type="text" placeholder="Enter your name" required>
+
+            <label>Enroll Number</label>
+            <input id="enroll" type="text" placeholder="Enter roll number" required>
+
+            <label>Email</label>
+            <input id="email" type="email" placeholder="Enter email" required>
+
+            <label>Contact</label>
+            <input id="phone" type="text" placeholder="Enter phone number" required>
+
+            <label>Message (optional)</label>
+            <textarea id="message" placeholder="Write something..."></textarea>
+
+            <button type="submit" onclick="register()">Register</button>
+        </form>
+    </div>
+
+</body>
+
+<script>
+    // Auto-fill student data from localStorage
+    window.onload = function() {
+        const data = JSON.parse(localStorage.getItem("userdata"));
+        if (data) {
+            document.getElementById("name").value = data.name;
+            document.getElementById("enroll").value = data.enroll;
+            document.getElementById("email").value = data.email;
+            
+            // Make them readonly to prevent typos
+            document.getElementById("name").readOnly = true;
+            document.getElementById("enroll").readOnly = true;
+            document.getElementById("email").readOnly = true;
+        }
+    }
+
+  async function register(){
+        const inputname = document.getElementById("name");
+        const inputenroll = document.getElementById("enroll");
+        const inputemail = document.getElementById("email");
+        const inputphone = document.getElementById("phone");
+        const inputmessage = document.getElementById("message");
+        
+
+        const name = inputname.value;
+        const enroll = inputenroll.value;
+        const email = inputemail.value;
+        const phone = inputphone.value;
+        const message = inputmessage.value;
+
+        if (!name || !enroll || !email || !phone) {
+        alert("Please fill all required fields!");
+        return;
+    }
+
+       const baseURL = "http://localhost:5500/api/event_register";
+       const event = JSON.parse(localStorage.getItem("selectedEvent"));
+       const newStudent = {name,enroll,email,phone,message,
+                            event_name: event.event_name,
+                            event_date: event.event_date,
+                            event_time: event.event_time,
+                            event_location: event.event_location};
+     
+              // ye event se aaya hua data hai 
+
+       try{
+              const response = await fetch(baseURL, {
+            method: "POST",
+            headers : { "Content-Type": "application/json" },
+            body : JSON.stringify(newStudent)
+        });
+
+         if(response.ok){
+            alert("Registration Saved");
+            console.log("Registration saved");
+
+            inputname.value = "";
+            inputenroll.value = "";
+            inputemail.value = "";
+            inputphone.value = "";
+            inputmessage.value = "";
+            window.location.href = "stu_dashboard.html";
+         }
+         else if(response.status == 400){
+           alert("👥 Registration alrady exists! 👥");
+         }
+         else{
+            alert("API ERROR");
+             console.log("API ERROR");
+         }
+       }
+       catch(error){
+         console.log("Network ERROR");
+       }
+    } 
+
+</script>
+</html>

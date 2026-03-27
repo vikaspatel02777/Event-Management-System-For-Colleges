@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            padding: 20px;
+        }
+
+        /* Header – updated exactly like first code */
+        .header {
+            background: #0b63d6;
+            color: white;
+            padding: 18px;
+            text-align: center;
+        }
+
+        /* Card – updated exactly like first code */
+        .card {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Profile card heading – updated */
+        .card h2 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            color: #0b63d6;
+        }
+
+        /* ---- Rest original code untouched ---- */
+
+        /* Card Container */
+        .container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Event Cards */
+        .container .card {
+            width: 250px;
+        }
+
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .content {
+            padding: 15px;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+        }
+
+        p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        /* Button */
+        button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            border: none;
+            background: #333;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: black;
+        }
+
+        .upcoming-events {
+            margin: 20px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+        }
+
+        .upcoming-events h2 {
+            color: #0077b6;
+            margin-bottom: 15px;
+        }
+
+        .upcoming-events table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .upcoming-events th,
+        .upcoming-events td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .book-btn {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .book-btn:hover {
+            background-color: #019875;
+        }
+
+        /* Background blur overlay */
+        .tooltip-box {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(2px);
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        /* Popup box */
+        .tooltip-content {
+            width: 90%;
+            max-width: 450px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+            font-family: Consolas, monospace;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Close button */
+        .tooltip-close {
+            float: right;
+            cursor: pointer;
+            font-size: 22px;
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        /* Correction Button Style */
+        .correction-btn {
+            background: #e1f5fe;
+            color: #01579b;
+            border: 1px solid #01579b;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .correction-btn:hover {
+            background: #b3e5fc;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1 id="wel">Welcome</h1>
+        <p style="color: black;">On Your College Event Management Dashboard</p>
+    </div>
+
+    <!-- Profile -->
+    <div class="card">
+        <h2>Organizer Profile</h2>
+        <p>Org Name: <span id="name"></span></p>
+        <p>Role: <span id="role"></span></p>
+        <p>Contact: <span id="phone"></span></p>
+        <p>Email: <span id="email"></span></p>
+    </div>
+
+
+    <div class="container">
+
+        <!-- Card 1 -->
+        <div class="card">
+            <img src="event types/demo_img/culture.jpeg">
+            <div class="content">
+                <h3>Cultural Events</h3>
+                <p>Music, dance, drama and traditions that celebrate creativity and culture.</p>
+                <button onclick="window.location.href='event types/culturel.html'">Create</button>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+            <img src="event types/demo_img/tech.jpeg">
+            <div class="content">
+                <h3>Technical Events</h3>
+                <p>Coding, robotics, tech quizzes and innovation-focused challenges.</p>
+                <button onclick="window.location.href='event types/tech.html'">Create</button>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+            <img src="event types/demo_img/sport.jpeg">
+            <div class="content">
+                <h3>Sports Events</h3>
+                <p>Thrilling matches, athletic energy and full-on competitive spirit.</p>
+                <button onclick="window.location.href='event types/sport.html'">Create</button>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="card">
+            <img src="event types/demo_img/seminar.jpeg">
+            <div class="content">
+                <h3>Workshops & Seminars</h3>
+                <p>Hands-on learning, expert talks and skill-enhancing sessions.</p>
+                <button onclick="window.location.href='event types/seminar.html'">Create</button>
+            </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="card">
+            <img src="event types/demo_img/fun.jpeg">
+            <div class="content">
+                <h3>Informal / Fun Activities</h3>
+                <p>Games, laughter, bonding activities and super-fun moments.</p>
+                <button onclick="window.location.href='event types/fun.html'">Create</button>
+            </div>
+        </div>
+
+        <!-- Multi Event Card -->
+        <div class="card">
+            <img src="event types/demo_img/multi.jpeg">
+            <div class="content">
+                <h3>Multi / Mixed Events</h3>
+                <p>A combination of cultural, technical, sports and fun activities to engage everyone in one go.</p>
+                <button>Create</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Tooltip Box (Popup) -->
+    <div id="desc-tooltip" class="tooltip-box">
+        <div class="tooltip-content">
+            <span class="tooltip-close" onclick="closeTooltip()">✕</span>
+            <h3>Event Description</h3>
+            <p id="tooltip-text"></p>
+        </div>
+    </div>
+
+
+    <section class="upcoming-events">
+        <h2>ALL Upcoming Events</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>Availability</th>
+                    <th>Discription</th>
+                    <th>Status</th>
+                    <!-- <th></th> -->
+
+                </tr>
+            </thead>
+
+            <!-- DYNAMIC EVENTS WILL LOAD HERE -->
+            <tbody id="event-body"></tbody>
+
+        </table>
+    </section>
+
+    <script>
+        const data = JSON.parse(localStorage.getItem("userdata"));
+        document.getElementById("wel").innerText = "Welcome " + data.name;
+        document.getElementById("name").innerText = data.name;
+        document.getElementById("role").innerText = data.role;
+        document.getElementById("phone").innerText = data.phone;
+        document.getElementById("email").innerText = data.email;
+
+
+
+        async function loadEvents() {
+            const tbody = document.getElementById("event-body");
+
+            const urls = [
+                "http://localhost:5500/api/event",
+                "http://localhost:5500/api/culturel_event",
+                "http://localhost:5500/api/fun_event",
+                "http://localhost:5500/api/tech_event",
+                "http://localhost:5500/api/seminar_event",
+                "http://localhost:5500/api/sport_event"
+
+            ];
+
+            const allResponses = await Promise.all(urls.map(url => fetch(url)));
+            const allData = await Promise.all(allResponses.map(res => res.json()));
+            const events = allData.flat(); // sab data ko ek array me combine
+
+
+            tbody.innerHTML = "";
+
+            events.forEach(e => {              /* <tr> ye yaha har baar ek nai row creat karne ke liye hai */
+
+                let statusText = "";
+                if (e.status === "active") {
+                    statusText = "🟢 Active";
+                } else if (e.status === "pending") {
+                    statusText = "🟡 Pending";
+                } else if (e.status === "correction") {
+                    statusText = `<button class="correction-btn" onclick="showTooltip('${e.correction_msg || 'No feedback provided'}')">🔵 Correction</button>`;
+                } else if (e.status === "reject") {
+                    statusText = "🔴 Reject";
+                }
+
+                const row =
+                    ` <tr>                       
+             <td>${e.event_name || e.name}</td>
+             <td>${e.event_date || e.date}</td>
+             <td>${e.event_time || e.time}</td>
+             <td>${e.event_location || e.location}</td>
+             <td>${e.event_seats || e.seats}</td>
+             <td> <button class="desc-btn" data-text="${e.event_discription || e.decs}">
+                     Description </button></td> 
+             <td>${statusText}</td>
+
+ <!-- <td>
+  <button class="book-btn"
+     onclick="saveEvent('${e.event_name}', '${e.event_date}', '${e.event_time}', '${e.event_location}');
+     window.location.href='event_ragis_stu.html'">
+     book now
+  </button>
+</td> -->
+
+            </tr> `;
+                tbody.innerHTML += row;
+
+            });
+        }
+
+        loadEvents();
+
+
+        // Function to show tooltip
+        function showTooltip(text) {
+            document.getElementById("tooltip-text").innerText = text;
+            document.getElementById("desc-tooltip").style.display = "block";
+        }
+
+        // Function to close tooltip
+        function closeTooltip() {
+            document.getElementById("desc-tooltip").style.display = "none";
+        }
+
+        // Click listener for Description buttons
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("desc-btn")) {
+                const text = e.target.getAttribute("data-text");
+                showTooltip(text);
+            }
+        });
+
+    </script>
+</body>
+
+</html>
