@@ -142,10 +142,6 @@ Event_Management_System_For_Colleges/
 
 This project is licensed under the ISC License - see the package.json file for details.
 
-## 👥 Authors
-
-- **Vickey Yaduwanshi** - *Initial work* - [VickeyYaduwanshi](https://github.com/VickeyYaduwanshi)
-
 ## 🙏 Acknowledgments
 
 - MongoDB for the database solution
